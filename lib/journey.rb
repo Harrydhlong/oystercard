@@ -14,14 +14,23 @@ class Journey
   end
 
   def complete?
-    @complete
+    if (@entry_station = entry_station && @exit_station = exit_station)
+      @complete = true
+    else
+      @complete = false
+    end
   end
 
   def fare
-    PENALTY_FARE
+    if @exit_station = exit_station
+      1
+    else
+      PENALTY_FARE
+    end
   end
 
   def finish(exit_station)
+    @exit_station = exit_station
     self
   end
 end
