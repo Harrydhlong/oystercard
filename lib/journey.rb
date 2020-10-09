@@ -1,36 +1,37 @@
-require_relative 'oystercard'
-
 class Journey
+  attr_reader :entry_station, :exit_station
+
   PENALTY_FARE = 6
 
-  attr_reader :entry_station
-  attr_reader :exit_station
-  attr_reader :journeys
-
-  def initialize(station = entry_station)
-    @journeys = {}
+  def initialize(entry_station: nil)
+    @entry_station = entry_station
     @complete = false
-    @entry_station = station
   end
 
-  def complete?
-    if (@entry_station = entry_station && @exit_station = exit_station)
-      @complete = true
-    else
-      @complete = false
-    end
+  def exit(station=nil)
+    @exit_station = station
+    @complete = true
+    self
   end
 
   def fare
-    if @exit_station = exit_station
-      1
-    else
-      PENALTY_FARE
-    end
+    return PENALTY_FARE if penalty?
+    zones.inject(:-) + 1
   end
 
-  def finish(exit_station)
-    @exit_station = exit_station
-    self
+  def complete?
+    @complete
   end
+
+
+  private
+
+  def zones
+    [entry_station, exit_station].map(&:zone).sort{|a,b| b <=> a }
+  end
+
+  def penalty?
+    (!entry_station || !exit_station) 
+  end
+
 end
